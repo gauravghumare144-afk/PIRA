@@ -1,118 +1,144 @@
-const KEY="pria_goals_v6";
-const MORNING_KEY="pria_6am_last_v1";
+const KEY="pria_goals_v1";
 let goals=JSON.parse(localStorage.getItem(KEY)||"[]");
-let audioCtx=null,alarmTimer=null,alarmActive=false,currentAlarmGoals=[];
+let editingId=null;
+let deferredPrompt=null;
+
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toISOString().slice(0,10);
-$("goalDate").value=today();
 
-function save(){localStorage.setItem(KEY,JSON.stringify(goals));render()}
-function fmt(t){if(!t)return"";let[h,m]=t.split(":").map(Number),d=new Date();d.setHours(h,m);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
+$("date").value=today();
 
-function render(){
- const items=goals.filter(g=>g.date===today()).sort((a,b)=>a.time.localeCompare(b.time));
- $("goalList").innerHTML="";$("empty").style.display=items.length?"none":"block";
- items.forEach(g=>{
-  const row=document.createElement("div");row.className="goal"+(g.done?" done":"");
-  row.innerHTML=`<input class="check" type="checkbox" ${g.done?"checked":""}><div class="goalMain"><div class="goalText"></div><div class="goalTime"></div></div><button class="delete">🗑️</button>`;
-  row.querySelector(".goalText").textContent=g.text;row.querySelector(".goalTime").textContent=fmt(g.time);
-  row.querySelector(".check").onchange=e=>{g.done=e.target.checked;save();};
-  row.querySelector(".delete").onclick=()=>{goals=goals.filter(x=>x.id!==g.id);save();};
-  $("goalList").appendChild(row);
- });
- let total=items.length,done=items.filter(g=>g.done).length,p=total?Math.round(done/total*100):0;
- $("progressBar").style.width=p+"%";$("progressText").textContent=p+"%";$("progressSub").textContent=`${done} of ${total} goals completed`;
- $("perfectDay").textContent=total&&done===total?"🏆 PERFECT DAY! Every goal is complete. Excellent work, Sir!":"Complete every goal to unlock today's Perfect Day.";
- $("perfectDay").className="perfect"+(total&&done===total?" good":"");
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault(); deferredPrompt=e; $("installBtn").style.display="block";
+});
+window.addEventListener("appinstalled",()=>{
+  deferredPrompt=null; $("installBtn").style.display="none";
+});
+if(window.matchMedia("(display-mode: standalone)").matches || navigator.standalone){
+  $("installBtn").style.display="none";
 }
+
+$("installBtn").onclick=async()=>{
+  if(!deferredPrompt){
+    alert("If no install window appears, use your browser menu → Install app / Add to Home Screen.");
+    return;
+  }
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;
+};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(goals));render();}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 
 $("goalForm").onsubmit=e=>{
- e.preventDefault();
- let text=$("goalText").value.trim(),date=$("goalDate").value,time=$("goalTime").value;
- if(!text||!date||!time)return;
- goals.push({id:Date.now()+Math.random(),text,date,time,done:false,notified:false});
- $("goalText").value="";save();
+  e.preventDefault();
+  const title=$("title").value.trim(), date=$("date").value, time=$("time").value;
+  if(!title||!date||!time)return;
+  if(editingId){
+    const g=goals.find(x=>x.id===editingId);
+    if(g){g.title=title;g.date=date;g.time=time;}
+    editingId=null; $("saveBtn").textContent="➕ Add Goal"; $("editHint").textContent="";
+  }else{
+    goals.push({id:uid(),title,date,time,completed:false,dismissed:false});
+  }
+  $("goalForm").reset(); $("date").value=today(); save();
 };
 
-function unlockAudio(){
- try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();}catch(e){}
+function editGoal(id){
+  const g=goals.find(x=>x.id===id); if(!g)return;
+  editingId=id;$("title").value=g.title;$("date").value=g.date;$("time").value=g.time;
+  $("saveBtn").textContent="💾 Save Changes";$("editHint").textContent="Editing: "+g.title;
+  window.scrollTo({top:0,behavior:"smooth"});
 }
-function beep(ms=360,f=880){
- if(!audioCtx)return;
- let o=audioCtx.createOscillator(),g=audioCtx.createGain();
- o.type="square";o.frequency.value=f;
- g.gain.setValueAtTime(.0001,audioCtx.currentTime);
- g.gain.exponentialRampToValueAtTime(.42,audioCtx.currentTime+.02);
- g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+ms/1000);
- o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+ms/1000+.02);
-}
-function pattern(){beep(400,880);setTimeout(()=>beep(400,660),450);setTimeout(()=>beep(400,880),900);}
-function startRepeatingAlarm(){
- unlockAudio();alarmActive=true;
- if(alarmTimer)clearInterval(alarmTimer);
- pattern();
- alarmTimer=setInterval(()=>{if(alarmActive)pattern();},2200);
-}
-function stopAlarm(){
- alarmActive=false;
- if(alarmTimer){clearInterval(alarmTimer);alarmTimer=null;}
-}
-function clean(s){s=s.trim().replace(/[.!?]+$/,"");return s?s.charAt(0).toLowerCase()+s.slice(1):"your goal"}
+function deleteGoal(id){if(confirm("Delete this goal?")){goals=goals.filter(g=>g.id!==id);save();}}
+function toggleGoal(id){const g=goals.find(x=>x.id===id);if(g){g.completed=!g.completed;g.dismissed=false;save();}}
 
-function reminder(texts,alarmGoals=[]){
- currentAlarmGoals=alarmGoals;
- let u=[...new Set(texts)];
- let msg=u.length===1?`It's time to ${clean(u[0])} now.`:`It's time to: ${u.map(clean).join("; ")}.`;
- $("alarmMessage").textContent=msg;
- $("alarmOverlay").classList.remove("hidden");
- startRepeatingAlarm();
-
- if("Notification"in window&&Notification.permission==="granted"){
-  try{new Notification("PRIA Reminder",{body:msg,tag:"pria-"+Date.now(),renotify:true});}catch(e){}
- }
+function formatTime(t){
+  const [h,m]=t.split(":").map(Number);
+  const d=new Date();d.setHours(h,m,0,0);
+  return d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
 }
+function render(){
+  const box=$("goals");box.innerHTML="";
+  const sorted=[...goals].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  if(!sorted.length) box.innerHTML='<div class="empty">No goals yet. Add your first goal above.</div>';
+  sorted.forEach(g=>{
+    const el=document.createElement("div");el.className="goal "+(g.completed?"done":"");
+    el.innerHTML=`<div><div class="goal-title">${escapeHTML(g.title)}</div>
+    <div class="goal-meta">📅 ${g.date} &nbsp; ⏰ ${formatTime(g.time)} ${g.completed?"&nbsp; ✅ Completed":""}</div></div>
+    <div class="actions">
+      <button class="success" onclick="toggleGoal('${g.id}')">${g.completed?"↩ Undo":"✓ Complete"}</button>
+      <button class="secondary" onclick="editGoal('${g.id}')">✏️ Edit</button>
+      <button class="danger" onclick="deleteGoal('${g.id}')">🗑 Delete</button>
+    </div>`;
+    box.appendChild(el);
+  });
+  const t=today(), tg=goals.filter(g=>g.date===t), done=tg.filter(g=>g.completed).length;
+  const pct=tg.length?Math.round(done/tg.length*100):0;
+  $("stats").textContent=`${done} of ${tg.length} goals completed — ${pct}%`;
+  $("bar").style.width=pct+"%";
+  $("perfect").textContent=(tg.length>0&&done===tg.length)?"🏆 PERFECT DAY!":"";
+}
+render();
 
+let audioCtx=null;
+function beep(){
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type="sine";o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(audioCtx.destination);
+    o.start();o.stop(audioCtx.currentTime+.45);
+  }catch(e){}
+}
+function speak(text){
+  if("speechSynthesis" in window){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.rate=.9;u.pitch=1;
+    speechSynthesis.speak(u);
+  }
+}
+function notify(title,body){
+  if(Notification.permission==="granted"){
+    try{new Notification(title,{body,icon:"icon.svg",tag:"pria-"+title});}catch(e){}
+  }
+}
+function trigger(g){
+  if(g.completed)return;
+  const msg=`It's time to ${g.title} now.`;
+  beep();speak(msg);notify("⏰ PRIA Reminder",msg);
+  $("alarmStatus").textContent="🔔 Reminder active: "+g.title;
+  g.lastAlert=Date.now();save();
+}
+$("testBtn").onclick=()=>{beep();speak("This is a PRIA test alarm.");notify("🔊 PRIA Test Alarm","This is a PRIA test alarm.");$("alarmStatus").textContent="Test alarm played.";};
 $("notifyBtn").onclick=async()=>{
- unlockAudio();
- if(!("Notification"in window)){alert("This browser does not support notifications. The repeating in-app alarm works while PRIA is active.");return;}
- let p=await Notification.requestPermission();
- alert(p==="granted"?"Notifications are allowed. PRIA can now show reminders.":"Notifications were not allowed. Please allow them in browser settings.");
+  if(!("Notification" in window)){alert("This browser does not support notifications.");return;}
+  const p=await Notification.requestPermission();
+  $("alarmStatus").textContent=p==="granted"?"🔔 Notifications allowed.":"Notifications were not allowed.";
 };
 
-$("testAlarmBtn").onclick=()=>{unlockAudio();reminder(["test reminder"],[])};
-
-$("completeAlarmBtn").onclick=()=>{
- currentAlarmGoals.forEach(g=>g.done=true);
- save();
- $("alarmOverlay").classList.add("hidden");
- stopAlarm();
- currentAlarmGoals=[];
-};
-
-$("dismissBtn").onclick=()=>{
- $("alarmOverlay").classList.add("hidden");
- stopAlarm();
-};
-
-function checkClock(){
- let n=new Date();
- $("clock").textContent=n.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
- let d=n.toISOString().slice(0,10),t=n.toTimeString().slice(0,5);
-
- // 6:00 AM daily reminder
- if(t==="06:00" && localStorage.getItem(MORNING_KEY)!==d){
-  localStorage.setItem(MORNING_KEY,d);
-  reminder(["set today's goals"],[]);
- }
-
- // Scheduled goals. If several goals have the same time, one repeating alarm is used.
- let due=goals.filter(g=>g.date===d&&g.time===t&&!g.notified&&!g.done);
- if(due.length){
-  due.forEach(g=>g.notified=true);
-  localStorage.setItem(KEY,JSON.stringify(goals));
-  reminder(due.map(g=>g.text),due);
- }
+function checkReminders(){
+  const now=new Date(), keyDate=now.toISOString().slice(0,10), hh=String(now.getHours()).padStart(2,"0"), mm=String(now.getMinutes()).padStart(2,"0");
+  goals.forEach(g=>{
+    if(g.date===keyDate && g.time===`${hh}:${mm}` && !g.completed){
+      const marker=`${keyDate}_${g.time}`;
+      if(g.lastTriggered!==marker){g.lastTriggered=marker;trigger(g);}
+    }
+  });
+  // Daily 6:00 AM reminder, once per day.
+  if(hh==="06"&&mm==="00"){
+    const dayKey="daily_"+keyDate;
+    if(localStorage.getItem("pria_daily")!==dayKey){
+      localStorage.setItem("pria_daily",dayKey);
+      const msg="It's time to set today's goals.";
+      beep();speak(msg);notify("🌅 PRIA Daily Reminder",msg);
+    }
+  }
 }
+setInterval(checkReminders,1000);
+checkReminders();
 
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-render();checkClock();setInterval(checkClock,1000);
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(e=>console.log("SW:",e)));
+}
