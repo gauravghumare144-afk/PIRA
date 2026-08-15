@@ -2,209 +2,89 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#111827">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#315efb">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
 <title>PRIA — Principal's Responsible Intelligent Assistant</title>
-<style>
-:root{--bg:#f4f7fb;--card:#fff;--text:#182230;--muted:#687386;--accent:#315efb;--accent2:#6d3df5;--border:#e5e9f2;--good:#159957;--danger:#d64545;--shadow:0 10px 30px rgba(30,45,75,.08)}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
-button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
-.app{display:flex;min-height:100vh}.sidebar{width:250px;background:#111827;color:#fff;padding:22px 14px;position:fixed;inset:0 auto 0 0;z-index:5}
-.brand{display:flex;align-items:center;gap:12px;padding:8px 10px 26px}.logo{width:45px;height:45px;border-radius:14px;background:linear-gradient(135deg,#315efb,#8b5cf6);display:grid;place-items:center;font-weight:800;font-size:18px}.brand b{font-size:18px}.brand small{display:block;color:#aeb7c7;margin-top:3px}
-.nav button{width:100%;background:transparent;color:#c9d1df;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0}.nav button:hover,.nav button.active{background:#24304a;color:#fff}.nav span{margin-right:10px}
-.sidebar-foot{position:absolute;bottom:20px;left:20px;right:20px;color:#8894a8;font-size:12px}
-.main{margin-left:250px;width:calc(100% - 250px);padding:28px;max-width:1600px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.topbar h1{margin:0;font-size:27px}.topbar p{margin:5px 0 0;color:var(--muted)}
-.actions{display:flex;gap:8px}.btn{padding:10px 14px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text)}.btn.primary{background:var(--accent);color:white;border-color:var(--accent)}
-.section{display:none}.section.active{display:block}
-.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:1.25fr .75fr}.three{grid-template-columns:repeat(3,1fr)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.stat{display:flex;justify-content:space-between;align-items:center}.stat .icon{width:44px;height:44px;border-radius:12px;background:#eef2ff;display:grid;place-items:center;font-size:21px}.stat h2{margin:4px 0;font-size:27px}.muted{color:var(--muted);font-size:13px}.card h3{margin:0 0 14px}
-.item{padding:13px 0;border-bottom:1px solid var(--border)}.item:last-child{border-bottom:0}.item b{display:block;margin-bottom:5px}.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;background:#edf2ff;color:#315efb}.badge.good{background:#e9f8f0;color:#159957}.badge.warn{background:#fff5df;color:#a66a00}
-.progress{height:8px;background:#e9edf4;border-radius:20px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#315efb,#7c4dff)}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--border);font-size:14px}th{color:var(--muted);font-weight:600}
-.form{display:grid;gap:10px;margin-bottom:16px}input,textarea,select{width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);outline:none}textarea{min-height:90px;resize:vertical}
-.chat{height:500px;display:flex;flex-direction:column}.messages{flex:1;overflow:auto;padding:4px}.msg{max-width:80%;padding:10px 13px;border-radius:14px;margin:8px 0;line-height:1.45;font-size:14px}.bot{background:#eef2ff}.user{background:#315efb;color:#fff;margin-left:auto}.chatbar{display:flex;gap:8px;margin-top:10px}.chatbar input{flex:1}
-.toast{position:fixed;right:25px;bottom:25px;background:#111827;color:#fff;padding:12px 16px;border-radius:10px;display:none;z-index:20}
-@media(max-width:900px){.sidebar{width:75px}.brand div:not(.logo),.nav button em,.sidebar-foot{display:none}.nav button{text-align:center}.nav span{margin:0}.main{margin-left:75px;width:calc(100% - 75px);padding:18px}.stats,.three{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
-@media(max-width:600px){.stats,.three{grid-template-columns:1fr}.topbar{align-items:flex-start;gap:10px}.actions .btn:first-child{display:none}}
-</style>
-<style>
-#installBtn{font-weight:800;box-shadow:0 6px 18px rgba(49,94,251,.25)}
-@media(max-width:600px){#installBtn{display:block!important}}
-</style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
-  <div class="brand"><div class="logo">P</div><div><b>PRIA</b><small>School Assistant</small></div></div>
-  <nav class="nav">
-    <button class="active" onclick="show('dashboard',this)"><span>🏠</span><em>Dashboard</em></button>
-    <button onclick="show('announcements',this)"><span>📢</span><em>Announcements</em></button>
-    <button onclick="show('events',this)"><span>📅</span><em>Events</em></button>
-    <button onclick="show('achievements',this)"><span>🏆</span><em>Achievements</em></button>
-    <button onclick="show('suggestions',this)"><span>💡</span><em>Suggestions</em></button>
-    <button onclick="show('tasks',this)"><span>✅</span><em>Tasks</em></button>
-    <button onclick="show('assistant',this)"><span>🤖</span><em>PRIA Assistant</em></button>
-    <button onclick="show('about',this)"><span>ℹ️</span><em>About PRIA</em></button>
-  </nav>
-  <div class="sidebar-foot">Prototype • Made by a Class 9 Student</div>
-</aside>
+<section class="birthday-banner">
+  <div class="balloon b1">🎈</div><div class="balloon b2">🎈</div>
+  <div class="confetti">✦ ✧ • ✦ • ✧ ✦</div>
+  <div class="birthday-copy">
+    <div class="small-birthday">🎉 A SPECIAL DAY 🎉</div>
+    <h1>Happy Birthday, Sir! 🎂</h1>
+    <p>Wishing you a wonderful year ahead filled with happiness, success and joy.</p>
+    <div class="from">From, <strong>Gaurav Ghumare</strong> ❤️</div>
+  </div>
+  <div class="portrait-wrap"><img src="sir-photo.png" alt="Principal Sir"></div>
+</section>
 
-<main class="main">
-<div class="topbar">
-  <div><h1 id="pageTitle">Good evening, Sir 👋</h1><p id="dateLine"></p></div>
-  <div class="actions"><button id="installBtn" class="btn primary" onclick="installPRIA()">📲 Install PRIA App</button><button class="btn" onclick="toggleTheme()">🌙 Theme</button><button class="btn primary" onclick="show('assistant')">🤖 Ask PRIA</button></div>
+<header class="topbar">
+  <div>
+    <div class="badge">DAILY GOALS • SMART REMINDERS</div>
+    <h2>Good day, Sir.</h2>
+    <p>Keep all your daily goals in one place. PRIA reminds you at the exact time.</p>
+  </div>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+
+<main>
+<section class="grid">
+<div class="card">
+<h3>➕ Add a Goal</h3>
+<form id="goalForm">
+<label>Goal / Activity<input id="goalText" required placeholder="Go to rest"></label>
+<label>Date<input id="goalDate" type="date" required></label>
+<label>Time<input id="goalTime" type="time" required></label>
+<button class="btn primary" type="submit">Add Goal</button>
+</form>
 </div>
 
-<section id="dashboard" class="section active">
-<div class="grid stats">
- <div class="card stat"><div><span class="muted">Announcements</span><h2 id="annCount">3</h2></div><div class="icon">📢</div></div>
- <div class="card stat"><div><span class="muted">Upcoming Events</span><h2 id="eventCount">4</h2></div><div class="icon">📅</div></div>
- <div class="card stat"><div><span class="muted">Achievements</span><h2 id="achCount">5</h2></div><div class="icon">🏆</div></div>
- <div class="card stat"><div><span class="muted">Open Tasks</span><h2 id="taskCount">3</h2></div><div class="icon">✅</div></div>
-</div>
-<br>
-<div class="grid two">
- <div class="card"><h3>📢 Latest Announcements</h3><div id="dashAnnouncements"></div></div>
- <div class="card"><h3>📝 Principal's Focus</h3>
-   <div class="item"><b>School Activities</b><span class="muted">Keep upcoming competitions and events organized.</span></div>
-   <div class="item"><b>Student Voice</b><span class="muted">Review new student suggestions.</span></div>
-   <div class="item"><b>Achievements</b><span class="muted">Celebrate student progress and success.</span></div>
- </div>
-</div>
-<br>
-<div class="grid three">
- <div class="card"><h3>🏆 Achievement Progress</h3><p class="muted">Academic</p><div class="progress"><i style="width:82%"></i></div><p class="muted">Sports</p><div class="progress"><i style="width:68%"></i></div><p class="muted">Innovation</p><div class="progress"><i style="width:74%"></i></div></div>
- <div class="card"><h3>💡 Latest Idea</h3><div class="item"><b>Science Innovation Club</b><span class="muted">Create a student-led club for science projects and exhibitions.</span></div><span class="badge good">Positive idea</span></div>
- <div class="card"><h3>🤖 PRIA Status</h3><div class="item"><b>System Ready</b><span class="muted">All prototype modules are working locally in this browser.</span></div><span class="badge good">ONLINE</span></div>
+<div class="card progressCard">
+<h3>📊 Today's Progress</h3>
+<div class="progressTrack"><div id="progressBar"></div></div>
+<div class="percent" id="progressText">0%</div>
+<p id="progressSub">0 of 0 goals completed</p>
 </div>
 </section>
 
-<section id="announcements" class="section">
-<div class="card"><h3>📢 Announcements</h3>
-<form class="form" onsubmit="addAnnouncement(event)"><input id="aTitle" placeholder="Announcement title" required><textarea id="aText" placeholder="Announcement details" required></textarea><button class="btn primary">Add Announcement</button></form>
-<div id="announcementList"></div></div>
+<section class="card">
+<div class="sectionTitle">
+<h3>📅 Today's Goals</h3>
+<div class="actions">
+<button id="notifyBtn" class="btn secondary">🔔 Allow Notifications & Alarms</button>
+<button id="testAlarmBtn" class="btn secondary">🔊 Test Alarm</button>
+</div>
+</div>
+<div id="goalList"></div>
+<div id="empty" class="empty">No goals for today. Add your first goal above.</div>
 </section>
 
-<section id="events" class="section">
-<div class="card"><h3>📅 School Events</h3>
-<form class="form" onsubmit="addEvent(event)"><input id="eName" placeholder="Event name" required><input id="eDate" type="date" required><input id="ePlace" placeholder="Venue / location" required><button class="btn primary">Add Event</button></form>
-<table><thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Status</th></tr></thead><tbody id="eventList"></tbody></table></div>
+<section class="card">
+<h3>🏆 Perfect Day</h3>
+<div id="perfectDay" class="perfect">Complete every goal to unlock today's Perfect Day.</div>
 </section>
 
-<section id="achievements" class="section">
-<div class="card"><h3>🏆 Achievement Wall</h3>
-<form class="form" onsubmit="addAchievement(event)"><input id="achName" placeholder="Student / team achievement" required><select id="achCat"><option>Academics</option><option>Sports</option><option>Science</option><option>Arts</option><option>Technology</option></select><input id="achDetail" placeholder="Achievement details" required><button class="btn primary">Add Achievement</button></form>
-<div id="achievementList"></div></div>
+<section class="card">
+<h3>🎁 Made especially for Principal Sir</h3>
+<p>PRIA supports multiple goals, exact-time reminders, repeating alarms and notifications.</p>
 </section>
+</main>
 
-<section id="suggestions" class="section">
-<div class="card"><h3>💡 Student Suggestions</h3>
-<form class="form" onsubmit="addSuggestion(event)"><input id="sName" placeholder="Student name (optional)"><input id="sIdea" placeholder="Suggestion title" required><textarea id="sText" placeholder="Explain the idea" required></textarea><button class="btn primary">Submit Suggestion</button></form>
-<div id="suggestionList"></div></div>
-</section>
-
-<section id="tasks" class="section">
-<div class="card"><h3>✅ Principal's Task Manager</h3>
-<form class="form" onsubmit="addTask(event)"><input id="taskInput" placeholder="Add a task" required><button class="btn primary">Add Task</button></form>
-<div id="taskList"></div></div>
-</section>
-
-<section id="assistant" class="section">
-<div class="card chat"><h3>🤖 PRIA Assistant</h3>
-<div class="messages" id="messages"><div class="msg bot">Hello Sir! I am PRIA. Ask me about announcements, events, achievements, tasks, or suggestions.</div></div>
-<div class="chatbar"><input id="chatInput" placeholder="Ask PRIA something..." onkeydown="if(event.key==='Enter') ask()"><button class="btn primary" onclick="ask()">Send</button></div>
-</div></section>
-
-<section id="about" class="section">
-<div class="card"><h3>ℹ️ About PRIA</h3>
-<p><b>PRIA</b> stands for <b>Principal's Responsible Intelligent Assistant</b>.</p>
-<p>It is a student-created web prototype designed to demonstrate how technology could organize school information in one place.</p>
-<div class="grid three"><div class="card"><h3>🎯 Goal</h3><p class="muted">Make school information easier to organize and access.</p></div><div class="card"><h3>🧠 Concept</h3><p class="muted">A responsible assistant that supports—not replaces—school leadership.</p></div><div class="card"><h3>🚀 Future</h3><p class="muted">Authentication, real databases, role-based access and school-approved AI could be added later.</p></div></div>
-<br><p><b>Motto:</b> “Helping Principals Lead, Helping Students Grow.”</p>
-<p class="muted">Prototype created as a Class 9 computer project.</p>
-</div></section>
-</main></div>
-<div class="toast" id="toast"></div>
-
-<script>
-const defaults={
-announcements:[
-{title:"Independence Day Preparation",text:"Students should follow the school instructions for the upcoming celebration."},
-{title:"Science Exhibition",text:"Project preparation and selection activities will be conducted soon."},
-{title:"Student Council",text:"Keep track of upcoming student council activities and responsibilities."}],
-events:[
-{name:"Independence Day Celebration",date:"2026-08-15",place:"School Ground"},
-{name:"Science Exhibition",date:"2026-09-05",place:"Science Hall"},
-{name:"Sports Day",date:"2026-09-20",place:"Sports Ground"},
-{name:"Teachers' Appreciation Day",date:"2026-09-25",place:"School Auditorium"}],
-achievements:[
-{name:"Science Team",cat:"Science",detail:"Outstanding school-level science project."},
-{name:"School Football Team",cat:"Sports",detail:"Strong performance in inter-school competition."},
-{name:"Class 9 Innovation Group",cat:"Technology",detail:"Created a useful computer project concept."},
-{name:"Academic Stars",cat:"Academics",detail:"Excellent progress across subjects."},
-{name:"Art Club",cat:"Arts",detail:"Creative contribution to school activities."}],
-suggestions:[{name:"Class 9 Student",idea:"Science Innovation Club",text:"Create a student-led club for science projects and exhibitions."}],
-tasks:["Review upcoming school events","Review student suggestions","Prepare next school announcement"]
-};
-function load(k){return JSON.parse(localStorage.getItem("pria_"+k)||"null")||defaults[k]}
-function save(k,v){localStorage.setItem("pria_"+k,JSON.stringify(v))}
-function show(id,btn){
- document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");
- const names={dashboard:"Good evening, Sir 👋",announcements:"Announcements",events:"School Events",achievements:"Achievement Wall",suggestions:"Student Suggestions",tasks:"Task Manager",assistant:"PRIA Assistant",about:"About PRIA"};
- document.getElementById("pageTitle").textContent=names[id]||"PRIA"; window.scrollTo(0,0);
-}
-function render(){
- let a=load("announcements"),e=load("events"),ac=load("achievements"),s=load("suggestions"),t=load("tasks");
- annCount.textContent=a.length;eventCount.textContent=e.length;achCount.textContent=ac.length;taskCount.textContent=t.length;
- dashAnnouncements.innerHTML=a.slice(0,4).map(x=>`<div class="item"><b>${esc(x.title)}</b><span class="muted">${esc(x.text)}</span></div>`).join("");
- announcementList.innerHTML=a.map((x,i)=>`<div class="item"><b>${esc(x.title)}</b><span class="muted">${esc(x.text)}</span> <button class="btn" onclick="del('announcements',${i})">Delete</button></div>`).join("");
- eventList.innerHTML=e.map((x,i)=>`<tr><td><b>${esc(x.name)}</b></td><td>${x.date}</td><td>${esc(x.place)}</td><td><span class="badge">Planned</span> <button class="btn" onclick="del('events',${i})">Delete</button></td></tr>`).join("");
- achievementList.innerHTML=ac.map((x,i)=>`<div class="item"><b>${esc(x.name)} <span class="badge">${esc(x.cat)}</span></b><span class="muted">${esc(x.detail)}</span> <button class="btn" onclick="del('achievements',${i})">Delete</button></div>`).join("");
- suggestionList.innerHTML=s.map((x,i)=>`<div class="item"><b>${esc(x.idea)}</b><span class="muted">${esc(x.text)}${x.name?" — "+esc(x.name):""}</span> <span class="badge warn">Review</span> <button class="btn" onclick="del('suggestions',${i})">Delete</button></div>`).join("");
- taskList.innerHTML=t.map((x,i)=>`<div class="item"><label><input type="checkbox" onchange="completeTask(${i},this.checked)"> <span id="task_${i}">${esc(x)}</span></label> <button class="btn" onclick="del('tasks',${i})">Delete</button></div>`).join("");
-}
-function del(k,i){let a=load(k);a.splice(i,1);save(k,a);render();toast("Deleted")}
-function addAnnouncement(ev){ev.preventDefault();let a=load("announcements");a.unshift({title:aTitle.value,text:aText.value});save("announcements",a);ev.target.reset();render();toast("Announcement added")}
-function addEvent(ev){ev.preventDefault();let a=load("events");a.push({name:eName.value,date:eDate.value,place:ePlace.value});save("events",a);ev.target.reset();render();toast("Event added")}
-function addAchievement(ev){ev.preventDefault();let a=load("achievements");a.unshift({name:achName.value,cat:achCat.value,detail:achDetail.value});save("achievements",a);ev.target.reset();render();toast("Achievement added")}
-function addSuggestion(ev){ev.preventDefault();let a=load("suggestions");a.unshift({name:sName.value,idea:sIdea.value,text:sText.value});save("suggestions",a);ev.target.reset();render();toast("Suggestion submitted")}
-function addTask(ev){ev.preventDefault();let a=load("tasks");a.push(taskInput.value);save("tasks",a);ev.target.reset();render();toast("Task added")}
-function completeTask(i,checked){document.getElementById("task_"+i).style.textDecoration=checked?"line-through":"none"}
-function ask(){
- let input=chatInput.value.trim();if(!input)return;addMsg(input,"user");chatInput.value="";
- let q=input.toLowerCase(),reply;
- if(q.includes("announcement"))reply=`There are ${load("announcements").length} announcements currently stored in PRIA.`;
- else if(q.includes("event")){let e=load("events");reply=e.length?`There are ${e.length} upcoming events. The next listed event is "${e[0].name}".`:"There are no events listed."}
- else if(q.includes("achievement"))reply=`PRIA currently has ${load("achievements").length} achievements in the Achievement Wall.`;
- else if(q.includes("task"))reply=`There are ${load("tasks").length} open tasks in the Task Manager.`;
- else if(q.includes("suggest"))reply=`There are ${load("suggestions").length} student suggestions waiting for review.`;
- else if(q.includes("hello")||q.includes("hi"))reply="Hello Sir! PRIA is ready to help organize the school's information.";
- else if(q.includes("who are you")||q.includes("what is pria"))reply="I am PRIA — Principal's Responsible Intelligent Assistant, a student-created school management prototype.";
- else reply="I can help with announcements, events, achievements, suggestions and tasks. Try asking: “How many events are there?”";
- setTimeout(()=>addMsg(reply,"bot"),250)
-}
-function addMsg(t,type){let d=document.createElement("div");d.className="msg "+type;d.textContent=t;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
-function toggleTheme(){document.body.classList.toggle("dark");if(document.body.classList.contains("dark")){document.documentElement.style.setProperty("--bg","#0b1220");document.documentElement.style.setProperty("--card","#111827");document.documentElement.style.setProperty("--text","#eef2ff");document.documentElement.style.setProperty("--muted","#a8b1c2");document.documentElement.style.setProperty("--border","#273247")}else location.reload()}
-function toast(t){let x=document.getElementById("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",1800)}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
-let deferredInstallPrompt=null;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;const b=document.getElementById("installBtn");if(b){b.textContent="📲 Install PRIA App";b.disabled=false;}});
-window.addEventListener("appinstalled",()=>{deferredInstallPrompt=null;const b=document.getElementById("installBtn");if(b){b.textContent="✅ PRIA App Installed";b.disabled=true;}toast("PRIA App installed successfully!");});
-async function installPRIA(){
- const b=document.getElementById("installBtn");
- if(deferredInstallPrompt){deferredInstallPrompt.prompt(); const r=await deferredInstallPrompt.userChoice; deferredInstallPrompt=null; if(r.outcome!=="accepted"){b.textContent="📲 Install PRIA App";} return;}
- if(window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true){toast("PRIA is already installed.");return;}
- toast("If no install window appears, open Chrome menu → Install PRIA App or Add to Home screen.");
-}
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
-
-dateLine.textContent=new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-render();
-</script>
+<div id="alarmOverlay" class="overlay hidden">
+<div class="alarmBox">
+<div class="alarmIcon">🔔</div>
+<span class="badge">PRIA REMINDER</span>
+<h2>IT'S TIME</h2>
+<p id="alarmMessage"></p>
+<p class="repeatNote">🔊 The alarm will keep repeating until the goal is marked complete or the alarm is dismissed.</p>
+<button id="completeAlarmBtn" class="btn primary">Mark Goal Complete</button>
+<button id="dismissBtn" class="btn secondary full">Dismiss Alarm</button>
+</div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>
