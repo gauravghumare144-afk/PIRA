@@ -1,13 +1,18 @@
 {
-  "name":"PRIA — Principal's Responsible Intelligent Assistant",
-  "short_name":"PRIA",
-  "description":"Goal, reminder and daily progress assistant for Principal Sir.",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#07111f",
-  "theme_color":"#101827",
-  "orientation":"portrait-primary",
-  "icons":[
-    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  "name": "PRIA — Principal's Responsible Intelligent Assistant",
+  "short_name": "PRIA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8fa",
+  "theme_color": "#7b1e3a",
+  "description": "Principal's Responsible Intelligent Assistant with goals, reminders and daily progress.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
   ]
 }

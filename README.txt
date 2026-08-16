@@ -1,40 +1,55 @@
 PRIA — Principal's Responsible Intelligent Assistant
-=====================================================
+=======================================================
 
-FILES
------
-index.html   Main app
-app.js       Goals, alarms, notifications, progress and installation
-sw.js        Service worker for PWA/offline caching
-manifest.json PWA installation information
-icon.svg     App icon
-principal.jpg Optional Principal Sir photo
+PACKAGE FILES
+-------------
+index.html       Main app
+style.css        Birthday-themed design
+app.js           Goals, reminders, alarms, speech, notifications and progress
+manifest.json    PWA installation settings
+sw.js            Offline service worker
+icon.svg         PRIA app icon
+principal.png    Uploaded Principal Sir photo
 
-HOW TO USE ON A COMPUTER
-------------------------
-1. Put all files in one folder.
-2. Add your Principal Sir photo as "principal.jpg" in the same folder.
-3. For full PWA installation and service-worker features, run the folder from HTTPS hosting
-   or localhost. Opening index.html directly with file:// works for the main goal features,
-   but service workers/PWA installation may not work.
-4. Click "Allow Notifications & Alarms".
-5. Add goals with date and exact time.
-6. Click "Test Alarm" to test sound.
+FEATURES
+--------
+- Multiple goals
+- Goal/activity + date + exact time
+- Edit, delete and complete goals
+- Local device storage with localStorage
+- Repeating on-screen alarm until dismissed/completed
+- Voice reminder using browser speech synthesis
+- Browser notification when permission is granted
+- 6:00 AM daily reminder
+- Daily progress percentage
+- PERFECT DAY message
+- Test alarm button
+- Visible PWA Install button
+- Install button hides in installed/standalone mode
+- Birthday background and Principal Sir photo
+- No account/login required
 
-HOW TO INSTALL
---------------
-Upload this folder to an HTTPS static host such as GitHub Pages, Netlify, Vercel, or
-another static HTTPS host. Open the URL in a supported browser and use the visible
-"Install PRIA" button, or the browser's Install app / Add to Home Screen option.
+DEPLOYMENT
+----------
+Upload ALL files to GitHub Pages, Vercel, Netlify, etc.
+Use HTTPS. PWA installation requires a secure context such as HTTPS
+(localhost is also supported for development).
 
-IMPORTANT ALARM LIMITATION
+IMPORTANT ABOUT WEB ALARMS
 --------------------------
-Web browsers do not guarantee exact background alarms when the browser/device is fully
-closed, sleeping, or the operating system restricts background activity. The reminder
-checker is designed to work while PRIA is open/active, and notifications require browser
-permission. For guaranteed native background alarms, a native Android/iOS app would be
-needed.
+A normal web/PWA app cannot guarantee an exact alarm while the browser
+or operating system has completely suspended the app. This version checks
+the clock every second while PRIA is active. Notifications also depend on
+browser/OS permissions.
+
+For best results:
+1. Deploy PRIA using HTTPS.
+2. Install PRIA.
+3. Press "Allow Notifications & Alarms".
+4. Press "Test Alarm".
+5. Keep the app available/running when exact-time alarms are important.
 
 PHOTO
 -----
-Place a file named principal.jpg beside index.html. The app will automatically display it.
+The uploaded photo is already included as principal.png and displayed
+in the birthday header.
