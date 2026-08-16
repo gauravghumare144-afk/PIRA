@@ -1,131 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#7b1e3a">
-  <meta name="description" content="PRIA - Principal's Responsible Intelligent Assistant">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg">
-  <link rel="stylesheet" href="style.css">
-  <title>PRIA — Principal's Responsible Intelligent Assistant</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#7b1e3a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+<title>PRIA — Principal's Responsible Intelligent Assistant</title>
 </head>
 <body>
-  <div class="birthday-bg" aria-hidden="true">
-    <span>🎈</span><span>🎉</span><span>🎂</span><span>✨</span><span>🎁</span>
-    <span>🎈</span><span>✨</span><span>🎉</span><span>🎂</span><span>🎁</span>
+<div class="birthday-bg" aria-hidden="true">
+<span>🎈</span><span>🎉</span><span>🎂</span><span>✨</span><span>🎁</span>
+<span>🎈</span><span>✨</span><span>🎉</span><span>🎂</span><span>🎁</span>
+</div>
+
+<header class="hero">
+  <div class="photo-card">
+    <img src="principal.jpg" alt="Principal Sir">
   </div>
-
-  <header class="hero">
-    <div class="photo-wrap">
-      <img src="principal.png" alt="Principal Sir">
-    </div>
-    <div class="hero-text">
-      <div class="badge">PRIA</div>
-      <h1>Happy Birthday, Sir! 🎂</h1>
-      <h2>From, Gaurav Ghumare ❤️</h2>
-      <p>Principal's Responsible Intelligent Assistant</p>
-    </div>
-  </header>
-
-  <main>
-    <section class="card install-card">
-      <div>
-        <h2>📱 Install PRIA</h2>
-        <p>Install PRIA as an app on supported browsers and devices.</p>
-      </div>
-      <button id="installBtn" class="btn primary">📱 Install PRIA</button>
-    </section>
-
-    <section class="card toolbar">
-      <button id="notificationBtn" class="btn primary">🔔 Allow Notifications & Alarms</button>
-      <button id="testAlarmBtn" class="btn gold">🔊 Test Alarm</button>
-      <span id="status" class="status">Ready</span>
-    </section>
-
-    <section class="grid">
-      <div class="card">
-        <h2>🏆 Today's Progress</h2>
-        <div id="progressText" class="progress-text">0 of 0 goals completed — 0%</div>
-        <div class="progress-track"><div id="progressBar"></div></div>
-        <div id="perfectDay" class="perfect hidden">🏆 PERFECT DAY!</div>
-      </div>
-
-      <div class="card clock">
-        <h2>🕐 Current Time</h2>
-        <div id="clock">--:--:--</div>
-        <div id="date">--</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-heading">
-        <div>
-          <h2>📅 Goal Management</h2>
-          <p>Add multiple goals and set an exact date and time.</p>
-        </div>
-        <button id="addGoalBtn" class="btn primary">＋ Add Goal</button>
-      </div>
-
-      <div id="goalForm" class="goal-form hidden">
-        <label>
-          Goal / Activity
-          <input id="goalTitle" type="text" placeholder="Meeting with all council members">
-        </label>
-        <label>
-          Date
-          <input id="goalDate" type="date">
-        </label>
-        <label>
-          Exact Time
-          <input id="goalTime" type="time">
-        </label>
-        <div class="form-actions">
-          <button id="saveGoalBtn" class="btn primary">Save Goal</button>
-          <button id="cancelGoalBtn" class="btn light">Cancel</button>
-        </div>
-      </div>
-
-      <div id="goalsList"></div>
-    </section>
-
-    <section class="card daily-card">
-      <h2>🌅 6:00 AM Daily Reminder</h2>
-      <p class="quote">“It's time to set today's goals.”</p>
-      <p class="note">
-        PRIA checks the time continuously while the app is open. Notifications require browser permission.
-        Operating systems may suspend browser apps in the background, so a web/PWA alarm cannot guarantee
-        a wake-up when the app is completely suspended.
-      </p>
-    </section>
-
-    <section class="card birthday-message">
-      <div class="cake">🎂</div>
-      <h2>Happy Birthday, Sir! 🎉</h2>
-      <p>Wishing you a wonderful birthday and a fantastic year ahead.</p>
-      <strong>— From, Gaurav Ghumare ❤️</strong>
-    </section>
-  </main>
-
-  <div id="alarmOverlay" class="overlay hidden">
-    <div class="alarm-box">
-      <div class="alarm-bell">🔔</div>
-      <h2>PRIA Reminder</h2>
-      <p id="alarmMessage"></p>
-      <div class="alarm-buttons">
-        <button id="dismissAlarmBtn" class="btn danger">Dismiss</button>
-        <button id="completeAlarmBtn" class="btn primary">✓ Mark Completed</button>
-      </div>
-    </div>
+  <div class="hero-text">
+    <div class="badge">PRIA</div>
+    <h1>Happy Birthday, Sir! 🎂</h1>
+    <h2>From, Gaurav Ghumare ❤️</h2>
+    <p>Principal's Responsible Intelligent Assistant</p>
   </div>
+</header>
 
-  <footer>PRIA • No account required • Goals are stored on this device</footer>
+<main>
+<section class="card install-card">
+<div><h2>📱 Install PRIA</h2><p>Install PRIA as an app on supported browsers and devices.</p></div>
+<button id="installBtn" class="btn primary">📱 Install PRIA</button>
+</section>
 
-  <script src="app.js"></script>
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(() => {});
-    }
-  </script>
+<section class="card toolbar">
+<button id="notificationBtn" class="btn primary">🔔 Allow Notifications & Alarms</button>
+<button id="testAlarmBtn" class="btn gold">🔊 Test Alarm</button>
+<span id="status" class="status">Ready</span>
+</section>
+
+<section class="grid">
+<div class="card">
+<h2>🏆 Today's Progress</h2>
+<div id="progressText" class="progress-text">0 of 0 goals completed — 0%</div>
+<div class="progress-track"><div id="progressBar"></div></div>
+<div id="perfectDay" class="perfect hidden">🏆 PERFECT DAY!</div>
+</div>
+<div class="card clock">
+<h2>🕐 Current Time</h2>
+<div id="clock">--:--:--</div>
+<div id="date">--</div>
+</div>
+</section>
+
+<section class="card">
+<div class="section-heading">
+<div><h2>📅 Goal Management</h2><p>Add multiple goals and set an exact date and time.</p></div>
+<button id="addGoalBtn" class="btn primary">＋ Add Goal</button>
+</div>
+
+<div id="goalForm" class="goal-form hidden">
+<label>Goal / Activity<input id="goalTitle" type="text" placeholder="Meeting with all council members"></label>
+<label>Date<input id="goalDate" type="date"></label>
+<label>Exact Time<input id="goalTime" type="time"></label>
+<div class="form-actions">
+<button id="saveGoalBtn" class="btn primary">Save Goal</button>
+<button id="cancelGoalBtn" class="btn light">Cancel</button>
+</div>
+</div>
+<div id="goalsList"></div>
+</section>
+
+<section class="card daily-card">
+<h2>🌅 6:00 AM Daily Reminder</h2>
+<p class="quote">“It's time to set today's goals.”</p>
+<p class="note">Notifications require browser permission. Keep PRIA available for the best reminder behavior.</p>
+</section>
+
+<section class="card birthday-message">
+<div class="cake">🎂</div>
+<h2>Happy Birthday, Sir! 🎉</h2>
+<p>Wishing you a wonderful birthday and a fantastic year ahead.</p>
+<strong>— From, Gaurav Ghumare ❤️</strong>
+</section>
+</main>
+
+<div id="alarmOverlay" class="overlay hidden">
+<div class="alarm-box">
+<div class="alarm-bell">🔔</div>
+<h2>PRIA Reminder</h2>
+<p id="alarmMessage"></p>
+<div class="alarm-buttons">
+<button id="dismissAlarmBtn" class="btn danger">Dismiss</button>
+<button id="completeAlarmBtn" class="btn primary">✓ Mark Completed</button>
+</div>
+</div>
+</div>
+
+<footer>PRIA • No account required • Goals are stored on this device</footer>
+<script src="app.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{});}</script>
 </body>
 </html>

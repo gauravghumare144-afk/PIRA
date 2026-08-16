@@ -1,18 +1,1 @@
-{
-  "name": "PRIA — Principal's Responsible Intelligent Assistant",
-  "short_name": "PRIA",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#fff8fa",
-  "theme_color": "#7b1e3a",
-  "description": "Principal's Responsible Intelligent Assistant with goals, reminders and daily progress.",
-  "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
-}
+{"name":"PRIA — Principal's Responsible Intelligent Assistant","short_name":"PRIA","start_url":"./","scope":"./","display":"standalone","background_color":"#fff8fa","theme_color":"#7b1e3a","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
